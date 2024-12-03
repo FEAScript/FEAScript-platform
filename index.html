@@ -73,7 +73,7 @@
     <ul id="menu">
       <li><a href="#help">Help</a></li>
       <li>
-        <a href="https://github.com/FEAScript/FEAScript" target="_blank">
+        <a href="https://github.com/FEAScript/FEAScript-core" target="_blank">
           FEAScript on GitHub
           <img
             src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
@@ -310,7 +310,7 @@
         const script = document.createElement("script");
         script.type = "module";
         script.textContent = `
-      import { FEAScriptModel, plotSolution, printVersion } from "https://feascript.github.io/FEAScript/src/index.js";
+      import { FEAScriptModel, plotSolution, printVersion } from "https://feascript.github.io/FEAScript-core/src/index.js";
       const model = new FEAScriptModel();
       ${code}
     `;
