@@ -1,48 +1,338 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>FEAScript Blockly GUI</title>
-  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
-  <style>
-    html, body, #blocklyDiv {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-</head>
-<body>
-  <div id="blocklyDiv"></div>
-  <script>
-     Blockly.defineBlocksWithJsonArray([
-      {
-        type: 'feascript_function',
-        message0: 'Run FEAScript %1',
-        args0: [
-          {
-            type: 'field_input',
-            name: 'FUNC_NAME',
-            text: 'default'
-          }
-        ],
-        output: null,
-        colour: 230,
-        tooltip: 'Runs a FEAScript function',
-        helpUrl: ''
-      }
-    ]);
 
-    const workspace = Blockly.inject('blocklyDiv', {
-      toolbox: {
-        kind: 'flyoutToolbox',
-        contents: [
-          { kind: 'block', type: 'logic_compare' },
-          { kind: 'block', type: 'math_number' },
-          { kind: 'block', type: 'feascript_function' }
-        ]
+<!--   ______ ______           _____           _       _     -->
+<!--  |  ____|  ____|   /\    / ____|         (_)     | |    -->
+<!--  | |__  | |__     /  \  | (___   ___ ____ _ ____ | |_   -->
+<!--  |  __| |  __|   / /\ \  \___ \ / __|  __| |  _ \| __|  -->
+<!--  | |    | |____ / ____ \ ____) | (__| |  | | |_) | |    -->
+<!--  |_|    |______/_/    \_\_____/ \___|_|  |_|  __/| |    -->
+<!--                                            | |   | |    -->
+<!--                                            |_|   | |_   -->
+<!--       Website: https://feascript.com/             \__|  -->
+
+<html>
+  <head>
+    <!-- Page title -->
+    <title>FEAScript Platform</title>
+    <link rel="icon" type="image/x-icon" href="https://feascript.com/assets/favicon.ico" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="keywords"
+      content="finite elements, fem, galerkin, cfd, computational mechanics, javascript"
+    />
+    <meta name="viewport" content="width=device-width" />
+    <!-- Link to the CSS file -->
+    <link href="https://feascript.com/FEAScript-website.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+    <!-- Include Blockly library -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+
+    <!-- Inline styles for full-screen layout -->
+    <style>
+      #blocklyDiv {
+        width: 100%; /* Occupy full width of the viewport */
+        height: 80vh; /* Occupy 80% of the viewport height */
+        border: 1px solid #ddd; /* Add a border around the Blockly container */
       }
-    });
-  </script>
-</body>
+
+      #runButton {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 20px 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #4d4d4d;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      #runButton:hover {
+        background-color: #d4aa00;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="top">
+      <a href="index.html">
+        <img
+          src="https://feascript.com/assets/FEAScriptLogo.png"
+          alt="FEAScript Logo"
+          id="responsive-logo"
+          style="vertical-align: middle"
+        />
+      </a>
+    </h1>
+
+    <h1>FEAScript Platform</h1>
+
+    <ul id="menu">
+      <li><a href="#help">Help</a></li>
+      <li>
+        <a href="https://github.com/FEAScript/FEAScript" target="_blank">
+          FEAScript on GitHub
+          <img
+            src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            alt="GitHub Logo"
+            style="width: 16px; height: 16px; vertical-align: middle; margin-left: 2px; margin-bottom: 4px"
+          />
+        </a>
+      </li>
+    </ul>
+
+    <p>
+      Welcome to the FEAScript Platform. Use the interface below to create and run finite element simulations
+      directly in your browser.
+    </p>
+
+    <button id="runButton">Run</button>
+    <div id="solutionPlot"></div>
+    <!-- Blockly container -->
+    <div id="blocklyDiv"></div>
+    <br />
+
+    <!-- Blockly script to define custom blocks -->
+    <script>
+      Blockly.defineBlocksWithJsonArray([
+        {
+          // Block to set solver config
+          type: "feascript_set_solver",
+          message0: "Set solver %1",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "SOLVER_TYPE",
+              options: [
+                ["Solid Heat Transfer", "solidHeatTransferScript"],
+                // Add other solver types as needed
+              ],
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          // Block to set mesh config
+          type: "feascript_set_mesh",
+          message0: "Set mesh dimension %1 order %2\n elements X %3 elements Y %4 max X %5 max Y %6",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "DIMENSION",
+              options: [
+                ["2D", "2D"],
+                ["1D", "1D"],
+              ],
+            },
+            {
+              type: "field_dropdown",
+              name: "ORDER",
+              options: [
+                ["Linear", "linear"],
+                ["Quadratic", "quadratic"],
+              ],
+            },
+            {
+              type: "input_value",
+              name: "NUM_ELEMENTS_X",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "NUM_ELEMENTS_Y",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "MAX_X",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "MAX_Y",
+              check: "Number",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          // Block to add boundary condition
+          type: "feascript_add_boundary_condition",
+          message0: "Add boundary condition %1 type %2 value %3",
+          args0: [
+            {
+              type: "input_value",
+              name: "BOUNDARY_KEY",
+              check: "String",
+            },
+            {
+              type: "field_dropdown",
+              name: "CONDITION_TYPE",
+              options: [
+                ["constantTemp", "constantTemp"],
+                ["symmetry", "symmetry"],
+                ["convection", "convection"],
+              ],
+            },
+            {
+              type: "input_value",
+              name: "CONDITION_VALUE",
+              check: "Array",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          // Block to solve the model
+          type: "feascript_solve",
+          message0: "Solve model",
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+      ]);
+
+      // JavaScript code generation for custom blocks
+      Blockly.JavaScript["feascript_set_solver"] = function (block) {
+        const solverType = block.getFieldValue("SOLVER_TYPE");
+        return `model.setSolverConfig("${solverType}");\n`;
+      };
+
+      Blockly.JavaScript["feascript_set_mesh"] = function (block) {
+        const dimension = block.getFieldValue("DIMENSION");
+        const order = block.getFieldValue("ORDER");
+        const numElementsX = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_X",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const numElementsY = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_Y",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const maxX = Blockly.JavaScript.valueToCode(block, "MAX_X", Blockly.JavaScript.ORDER_ATOMIC);
+        const maxY = Blockly.JavaScript.valueToCode(block, "MAX_Y", Blockly.JavaScript.ORDER_ATOMIC);
+
+        return `model.setMeshConfig({
+        meshDimension: "${dimension}",
+        elementOrder: "${order}",
+        numElementsX: ${numElementsX},
+        numElementsY: ${numElementsY},
+        maxX: ${maxX},
+        maxY: ${maxY}
+        });\n`;
+      };
+
+      Blockly.JavaScript["feascript_add_boundary_condition"] = function (block) {
+        const boundaryKey = Blockly.JavaScript.valueToCode(
+          block,
+          "BOUNDARY_KEY",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const conditionType = block.getFieldValue("CONDITION_TYPE");
+        const conditionValue = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION_VALUE",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        return `model.addBoundaryCondition(${boundaryKey}, ["${conditionType}", ...${conditionValue}]);\n`;
+      };
+
+      Blockly.JavaScript["feascript_solve"] = function (block) {
+        return `
+      const { solutionVector, nodesCoordinates } = model.solve();
+      plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "contour", "solutionPlot");
+    `;
+      };
+
+      const workspace = Blockly.inject("blocklyDiv", {
+        toolbox: {
+          kind: "flyoutToolbox",
+          contents: [
+            { kind: "block", type: "feascript_set_solver" },
+            { kind: "block", type: "feascript_set_mesh" },
+            { kind: "block", type: "feascript_add_boundary_condition" },
+            { kind: "block", type: "feascript_solve" },
+            { kind: "block", type: "math_number" },
+            { kind: "block", type: "text" },
+            { kind: "block", type: "lists_create_with" },
+          ],
+        },
+      });
+
+      Blockly.JavaScript["feascript_create_model"] = function (block) {
+        return ["new FEAScriptModel()", Blockly.JavaScript.ORDER_NEW];
+      };
+
+      Blockly.JavaScript["feascript_set_solver"] = function (block) {
+        const solverType = block.getFieldValue("SOLVER_TYPE");
+        return `model.setSolverConfig("${solverType}");\n`;
+      };
+
+      Blockly.JavaScript["feascript_set_mesh"] = function (block) {
+        const dimension = block.getFieldValue("DIMENSION");
+        const order = block.getFieldValue("ORDER");
+        const numElementsX = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_X",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const numElementsY = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_Y",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const maxX = Blockly.JavaScript.valueToCode(block, "MAX_X", Blockly.JavaScript.ORDER_ATOMIC);
+        const maxY = Blockly.JavaScript.valueToCode(block, "MAX_Y", Blockly.JavaScript.ORDER_ATOMIC);
+
+        return `model.setMeshConfig({
+        meshDimension: "${dimension}",
+        elementOrder: "${order}",
+        numElementsX: ${numElementsX},
+        numElementsY: ${numElementsY},
+        maxX: ${maxX},
+        maxY: ${maxY}
+        });\n`;
+      };
+
+      function runCode() {
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+        const script = document.createElement("script");
+        script.type = "module";
+        script.textContent = `
+      import { FEAScriptModel, plotSolution, printVersion } from "https://feascript.github.io/FEAScript/src/index.js";
+      const model = new FEAScriptModel();
+      ${code}
+    `;
+        document.body.appendChild(script);
+      }
+
+      document.getElementById("runButton").addEventListener("click", runCode);
+    </script>
+
+    <h2 id="licensing"><a name="Licensing"></a>Licensing</h2>
+    <p>
+      FEAScript is distributed under the terms of the
+      <a href="https://opensource.org/license/mit" target="_blank">MIT license</a>. This website is licensed
+      under a
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank"
+        >Creative Commons Attribution 4.0 license</a
+      >.
+    </p>
+    <p>&#169; 2023-<span id="currentYear"></span> FEAScript.</p>
+
+    <script>
+      document.getElementById("currentYear").innerHTML = new Date().getFullYear();
+    </script>
+  </body>
 </html>
