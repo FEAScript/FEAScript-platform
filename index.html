@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FEAScript Blockly GUI</title>
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <style>
+    html, body, #blocklyDiv {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="blocklyDiv"></div>
+  <script>
+     Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'feascript_function',
+        message0: 'Run FEAScript %1',
+        args0: [
+          {
+            type: 'field_input',
+            name: 'FUNC_NAME',
+            text: 'default'
+          }
+        ],
+        output: null,
+        colour: 230,
+        tooltip: 'Runs a FEAScript function',
+        helpUrl: ''
+      }
+    ]);
+
+    const workspace = Blockly.inject('blocklyDiv', {
+      toolbox: {
+        kind: 'flyoutToolbox',
+        contents: [
+          { kind: 'block', type: 'logic_compare' },
+          { kind: 'block', type: 'math_number' },
+          { kind: 'block', type: 'feascript_function' }
+        ]
+      }
+    });
+  </script>
+</body>
+</html>
