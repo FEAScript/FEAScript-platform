@@ -27,6 +27,61 @@
 
     <!-- Include Blockly library -->
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+	
+    <script type="module">
+      import {Pane} from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js';
+
+      // Create the Tweakpane panel
+      const pane = new Pane({
+        title: 'FEAScript Control Panel',
+        container: document.getElementById('controlPanelContainer'),
+      });
+	  
+      const f1 = pane.addFolder({
+        title: 'I/O',
+		expanded: false,
+      });
+
+      // Add an Save button to the panel
+      const btn_save = f1.addButton({
+        title: 'Save Project',
+		disabled: true,
+      });
+	  
+      // Add an Load button to the panel
+      const btn_load = f1.addButton({
+        title: 'Load Project',
+		disabled: true,
+      });
+	  
+      const f2 = pane.addFolder({
+        title: 'Settings',
+		expanded: false,
+      });
+	  
+      const SETTINGS = {
+        GPU: false,
+      };
+
+      f2.addBinding(SETTINGS, 'GPU', {
+  disabled: true});
+    
+      // Add an Evaluate button to the panel
+      const btn_eval = pane.addButton({
+        title: 'Evaluate',
+      });
+	  
+      // Define the "Evaluate" button's click action
+      btn_eval.on('click', () => {
+        runCode(); // Call the same runCode() function used for the Run button
+      });
+    
+      // Adjust the panel styling to align with the previous Run button location
+      const container = document.getElementById('controlPanelContainer');
+      container.style.margin = '20px 0';
+      container.style.textAlign = 'center';
+    </script>
+
 
     <!-- Inline styles for full-screen layout -->
     <style>
@@ -54,6 +109,43 @@
       #runButton:hover {
         background-color: #d4aa00;
       }
+	  
+      #controlPanelContainer {
+        width: 250px; /* Adjust the width as needed */
+        margin: 20px auto; /* Center the container horizontally */
+        text-align: center; /* Ensure content aligns in the center */
+      }
+
+:root {
+  --tp-base-background-color: #4d4d4d; /* Base background color: dark gray */
+  --tp-base-shadow-color: rgba(0, 0, 0, 0.2); /* Shadow color */
+
+  --tp-button-background-color: #d4aa00; /* Button background color: gold */
+  --tp-button-background-color-active: #e6b800; /* Button active background: slightly lighter gold */
+  --tp-button-background-color-focus: #c29500; /* Button focus background: darker gold */
+  --tp-button-background-color-hover: #ffcc00; /* Button hover background: brighter gold */
+  --tp-button-foreground-color: #ffffff; /* Button text color: white */
+
+  --tp-container-background-color: #333333; /* Container background: darker gray */
+  --tp-container-background-color-active: #4d4d4d; /* Active container background: matching the base */
+  --tp-container-background-color-focus: #5e5e5e; /* Focused container background: slightly lighter gray */
+  --tp-container-background-color-hover: #666666; /* Hovered container background: mid-gray */
+  --tp-container-foreground-color: #ffffff; /* Container text color: white */
+
+  --tp-groove-foreground-color: #d4aa00; /* Groove color: gold */
+
+  --tp-input-background-color: #4d4d4d; /* Input background: dark gray */
+  --tp-input-background-color-active: #333333; /* Active input background: darker gray */
+  --tp-input-background-color-focus: #5e5e5e; /* Focused input background: slightly lighter gray */
+  --tp-input-background-color-hover: #666666; /* Hovered input background: mid-gray */
+  --tp-input-foreground-color: #ffffff; /* Input text color: white */
+
+  --tp-label-foreground-color: #d4aa00; /* Label text color: gold */
+
+  --tp-monitor-background-color: #333333; /* Monitor (display box) background: darker gray */
+  --tp-monitor-foreground-color: #ffffff; /* Monitor text color: white */
+}
+
     </style>
   </head>
   <body>
@@ -91,7 +183,7 @@
       </p>
     </div>
 
-    <button id="runButton">Run</button>
+    <div id="controlPanelContainer"></div>
     <div id="solutionPlot"></div>
     <!-- Blockly container -->
     <div id="blocklyDiv"></div>
@@ -319,7 +411,6 @@
         document.body.appendChild(script);
       }
 
-      document.getElementById("runButton").addEventListener("click", runCode);
     </script>
 
     <p>&#169; 2023-<span id="currentYear"></span> FEAScript</p>
