@@ -84,10 +84,12 @@
       </li>
     </ul>
 
-    <p>
-      Welcome to the FEAScript Platform. Use the interface below to create and run finite element simulations
-      directly in your browser.
-    </p>
+    <div class="highlight-container">
+      <p>
+        Welcome to the FEAScript Platform. Use the interface below to create and run finite element
+        simulations directly in your browser.
+      </p>
+    </div>
 
     <button id="runButton">Run</button>
     <div id="solutionPlot"></div>
@@ -320,15 +322,10 @@
       document.getElementById("runButton").addEventListener("click", runCode);
     </script>
 
-    <h2 id="licensing"><a name="Licensing"></a>Licensing</h2>
-    <p>
-      FEAScript is distributed under the terms of the
-      <a href="https://github.com/FEAScript/FEAScript-core/blob/main/LICENSE" target="_blank">MIT license</a>.
-    </p>
-    <p>&#169; 2023-<span id="currentYear"></span> FEAScript.</p>
-
+    <p>&#169; 2023-<span id="currentYear"></span> FEAScript</p>
     <script>
       document.getElementById("currentYear").innerHTML = new Date().getFullYear();
     </script>
+
   </body>
 </html>
