@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Page title -->
+    <title>FEAScript Platform</title>
+    <link rel="icon" type="image/x-icon" href="https://feascript.com/assets/favicon.ico" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="keywords"
+      content="finite elements, fem, galerkin, cfd, computational mechanics, javascript"
+    />
+    <meta name="viewport" content="width=device-width" />
+    <!-- Link to the CSS file -->
+    <link href="https://feascript.com/FEAScript-website.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+    <title>Blockly File Import</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/blockly_compressed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/blocks_compressed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/msg/en.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/javascript_compressed.min.js"></script>
+    <!-- Inline styles for full-screen layout -->
+    <style>
+      #blocklyDiv {
+        width: 100%; /* Occupy full width of the viewport */
+        height: 80vh; /* Occupy 80% of the viewport height */
+        border: 1px solid #ddd; /* Add a border around the Blockly container */
+      }
+
+      #controlPanelContainer {
+        width: 250px; /* Adjust the width as needed */
+        margin: 20px auto; /* Center the container horizontally */
+        text-align: center; /* Ensure content aligns in the center */
+      }
+
+      :root {
+        --tp-base-background-color: #4d4d4d; /* Base background color: dark gray */
+        --tp-base-shadow-color: rgba(0, 0, 0, 0.2); /* Shadow color */
+        --tp-button-background-color: #d4aa00; /* Button background color: gold */
+        --tp-button-background-color-active: #e6b800; /* Button active background: slightly lighter gold */
+        --tp-button-background-color-focus: #c29500; /* Button focus background: darker gold */
+        --tp-button-background-color-hover: #ffcc00; /* Button hover background: brighter gold */
+        --tp-button-foreground-color: #ffffff; /* Button text color: white */
+        --tp-container-background-color: #333333; /* Container background: darker gray */
+        --tp-container-background-color-active: #4d4d4d; /* Active container background: matching the base */
+        --tp-container-background-color-focus: #5e5e5e; /* Focused container background: slightly lighter gray */
+        --tp-container-background-color-hover: #666666; /* Hovered container background: mid-gray */
+        --tp-container-foreground-color: #ffffff; /* Container text color: white */
+        --tp-groove-foreground-color: #d4aa00; /* Groove color: gold */
+        --tp-input-background-color: #4d4d4d; /* Input background: dark gray */
+        --tp-input-background-color-active: #333333; /* Active input background: darker gray */
+        --tp-input-background-color-focus: #5e5e5e; /* Focused input background: slightly lighter gray */
+        --tp-input-background-color-hover: #666666; /* Hovered input background: mid-gray */
+        --tp-input-foreground-color: #ffffff; /* Input text color: white */
+        --tp-label-foreground-color: #d4aa00; /* Label text color: gold */
+        --tp-monitor-background-color: #333333; /* Monitor (display box) background: darker gray */
+        --tp-monitor-foreground-color: #ffffff; /* Monitor text color: white */
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="top">
+      <a href="index.html">
+        <img
+          src="./assets/FEAScriptPlatformLogo.png"
+          alt="FEAScript Logo"
+          id="responsive-logo"
+          style="vertical-align: middle"
+        />
+      </a>
+    </h1>
+
+    <ul id="menu">
+      <li><a href="#help">Help</a></li>
+    </ul>
+
+    <div id="blocklyDiv"></div>
+    <button onclick="runCode()">Run Code</button>
+    <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+      <category name="File Operations">
+        <block type="file_import_block"></block>
+      </category>
+      <category name="Solver Configuration">
+        <block type="feascript_set_solver"></block>
+      </category>
+      <category name="Mesh Configuration">
+        <block type="feascript_set_mesh"></block>
+      </category>
+      <category name="Boundary Conditions">
+        <block type="feascript_add_boundary_condition"></block>
+      </category>
+      <category name="Model Operations">
+        <block type="feascript_solve"></block>
+      </category>
+      <category name="Basic Blocks">
+        <block type="math_number"></block>
+        <block type="text"></block>
+        <block type="lists_create_with"></block>
+      </category>
+    </xml>
+    <script>
+      // Define the File Import Block
+      Blockly.Blocks["file_import_block"] = {
+        init: function () {
+          this.jsonInit({
+            type: "file_import_block",
+            message0: "Import file",
+            nextStatement: null,
+            previousStatement: null,
+            colour: 230,
+            tooltip: "Open a file dialog to import a file",
+          });
+        },
+      };
+
+      // Add JavaScript generator for the File Import Block
+      Blockly.JavaScript["file_import_block"] = function (block) {
+        const code = `
+        (function() {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = '*/*'; // Accept all file types
+          fileInput.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const fileContent = e.target.result;
+                console.log("File content loaded:", fileContent);
+                // Process fileContent here
+              };
+              reader.readAsText(file);
+            }
+          };
+          fileInput.click();
+        })();
+      `;
+        return code;
+      };
+
+      // Define custom blocks
+      Blockly.defineBlocksWithJsonArray([
+        {
+          type: "feascript_set_solver",
+          message0: "Set solver %1",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "SOLVER_TYPE",
+              options: [
+                ["Solid Heat Transfer", "solidHeatTransferScript"],
+                // Add other solver types as needed
+              ],
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          type: "feascript_set_mesh",
+          message0: "Set mesh dimension %1 order %2\n elements X %3 elements Y %4 max X %5 max Y %6",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "DIMENSION",
+              options: [
+                ["2D", "2D"],
+                ["1D", "1D"],
+              ],
+            },
+            {
+              type: "field_dropdown",
+              name: "ORDER",
+              options: [
+                ["Linear", "linear"],
+                ["Quadratic", "quadratic"],
+              ],
+            },
+            {
+              type: "input_value",
+              name: "NUM_ELEMENTS_X",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "NUM_ELEMENTS_Y",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "MAX_X",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "MAX_Y",
+              check: "Number",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          type: "feascript_add_boundary_condition",
+          message0: "Add boundary condition %1 type %2 value %3",
+          args0: [
+            {
+              type: "input_value",
+              name: "BOUNDARY_KEY",
+              check: "String",
+            },
+            {
+              type: "field_dropdown",
+              name: "CONDITION_TYPE",
+              options: [
+                ["constantTemp", "constantTemp"],
+                ["symmetry", "symmetry"],
+                ["convection", "convection"],
+              ],
+            },
+            {
+              type: "input_value",
+              name: "CONDITION_VALUE",
+              check: "Array",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          type: "feascript_solve",
+          message0: "Solve model",
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+      ]);
+
+      // Add JavaScript generators for custom blocks
+      Blockly.JavaScript["feascript_set_solver"] = function (block) {
+        const solverType = block.getFieldValue("SOLVER_TYPE");
+        return `model.setSolverConfig("${solverType}");\n`;
+      };
+
+      Blockly.JavaScript["feascript_set_mesh"] = function (block) {
+        const dimension = block.getFieldValue("DIMENSION");
+        const order = block.getFieldValue("ORDER");
+        const numElementsX = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_X",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const numElementsY = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_Y",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const maxX = Blockly.JavaScript.valueToCode(block, "MAX_X", Blockly.JavaScript.ORDER_ATOMIC);
+        const maxY = Blockly.JavaScript.valueToCode(block, "MAX_Y", Blockly.JavaScript.ORDER_ATOMIC);
+
+        return `model.setMeshConfig({
+        meshDimension: "${dimension}",
+        elementOrder: "${order}",
+        numElementsX: ${numElementsX},
+        numElementsY: ${numElementsY},
+        maxX: ${maxX},
+        maxY: ${maxY}
+        });\n`;
+      };
+
+      Blockly.JavaScript["feascript_add_boundary_condition"] = function (block) {
+        const boundaryKey = Blockly.JavaScript.valueToCode(
+          block,
+          "BOUNDARY_KEY",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const conditionType = block.getFieldValue("CONDITION_TYPE");
+        const conditionValue = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION_VALUE",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        return `model.addBoundaryCondition(${boundaryKey}, ["${conditionType}", ...${conditionValue}]);\n`;
+      };
+
+      Blockly.JavaScript["feascript_solve"] = function (block) {
+        return `
+      const { solutionVector, nodesCoordinates } = model.solve();
+      plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "contour", "solutionPlot");
+    `;
+      };
+
+      // Inject Blockly
+      const workspace = Blockly.inject("blocklyDiv", {
+        toolbox: document.getElementById("toolbox"),
+      });
+
+      // Run Code from Workspace
+      function runCode() {
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+        console.log("Generated code:", code); // Debugging step
+        try {
+          eval(code); // Execute the generated code
+        } catch (e) {
+          console.error("Error running Blockly code:", e);
+        }
+      }
+    </script>
+    <p>&#169; 2023-<span id="currentYear"></span> FEAScript</p>
+    <script>
+      document.getElementById("currentYear").innerHTML = new Date().getFullYear();
+    </script>
+  </body>
+</html>
