@@ -22,15 +22,18 @@
     <!-- Inline styles for full-screen layout -->
     <style>
       #blocklyDiv {
-        width: 100%; /* Occupy full width of the viewport */
+        width: 75%; /* Adjust width to make space for the control panel */
         height: 80vh; /* Occupy 80% of the viewport height */
         border: 1px solid #ddd; /* Add a border around the Blockly container */
+        float: left; /* Align to the left side */
       }
 
       #controlPanelContainer {
-        width: 250px; /* Adjust the width as needed */
-        margin: 20px auto; /* Center the container horizontally */
+        width: 20%; /* Adjust the width as needed */
+        height: 80vh; /* Match the height of the Blockly container */
+        margin: 20px; /* Add some margin */
         text-align: center; /* Ensure content aligns in the center */
+        float: right; /* Align to the right side */
       }
 
       :root {
@@ -58,6 +61,57 @@
       }
     </style>
   </head>
+
+  <script type="module">
+    import { Pane } from "https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js";
+
+    // Create the Tweakpane panel
+    const pane = new Pane({
+      title: "FEAScript Control Panel",
+      container: document.getElementById("controlPanelContainer"),
+    });
+
+    const f1 = pane.addFolder({
+      title: "Load/Save Project",
+      expanded: false,
+    });
+
+    // Add an Save button to the panel
+    const btn_save = f1.addButton({
+      title: "Save Project",
+      disabled: true,
+    });
+
+    // Add an Load button to the panel
+    const btn_load = f1.addButton({
+      title: "Load Project",
+      disabled: true,
+    });
+
+    const f2 = pane.addFolder({
+      title: "Settings",
+      expanded: false,
+    });
+
+    const SETTINGS = {
+      GPU: false,
+    };
+
+    f2.addBinding(SETTINGS, "GPU", {
+      disabled: true,
+    });
+
+    // Add an Evaluate button to the panel
+    const btn_eval = pane.addButton({
+      title: "Evaluate",
+    });
+
+      // Define the "Evaluate" button's click action
+      btn_eval.on("click", () => {
+        runCode(); // Call the same runCode() function used for the Run button
+      });
+  </script>
+
   <body>
     <h1 class="top">
       <a href="index.html">
@@ -74,8 +128,8 @@
       <li><a href="#help">Help</a></li>
     </ul>
 
+    <div id="controlPanelContainer"></div>
     <div id="blocklyDiv"></div>
-    <button onclick="runCode()">Run Code</button>
     <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
       <category name="File Operations">
         <block type="file_import_block"></block>
@@ -87,9 +141,10 @@
         <block type="feascript_set_mesh"></block>
       </category>
       <category name="Boundary Conditions">
-        <block type="feascript_add_boundary_condition"></block>
+        <block type="feascript_add_thermal_boundary_condition"></block>
       </category>
       <category name="Model Operations">
+        <block type="feascript_create_model"></block>
         <block type="feascript_solve"></block>
       </category>
       <category name="Basic Blocks">
@@ -136,6 +191,25 @@
         })();
       `;
         return code;
+      };
+
+      // Define the FEAScript Model Creation Block
+      Blockly.Blocks['feascript_create_model'] = {
+        init: function() {
+          this.jsonInit({
+            type: 'feascript_create_model',
+            message0: 'Create new FEAScript model',
+            nextStatement: null,
+            previousStatement: null,
+            colour: 230,
+            tooltip: 'Creates a new FEAScript model instance'
+          });
+        }
+      };
+
+      // Add JavaScript generator for the Model Creation Block
+      Blockly.JavaScript['feascript_create_model'] = function(block) {
+        return 'const model = new FEAScriptModel();\n';
       };
 
       // Define custom blocks
@@ -203,8 +277,8 @@
           colour: 230,
         },
         {
-          type: "feascript_add_boundary_condition",
-          message0: "Add boundary condition %1 type %2 value %3",
+          type: "feascript_add_thermal_boundary_condition",
+          message0: "Add thermal boundary condition %1 type %2 value %3",
           args0: [
             {
               type: "input_value",
@@ -271,7 +345,7 @@
         });\n`;
       };
 
-      Blockly.JavaScript["feascript_add_boundary_condition"] = function (block) {
+      Blockly.JavaScript["feascript_add_thermal_boundary_condition"] = function (block) {
         const boundaryKey = Blockly.JavaScript.valueToCode(
           block,
           "BOUNDARY_KEY",
