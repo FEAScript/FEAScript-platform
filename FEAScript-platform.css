@@ -1,0 +1,48 @@
+/*  ______ ______           _____           _       _   
+   |  ____|  ____|   /\    / ____|         (_)     | |  
+   | |__  | |__     /  \  | (___   ___ ____ _ ____ | |_ 
+   |  __| |  __|   / /\ \  \___ \ / __|  __| |  _ \| __|
+   | |    | |____ / ____ \ ____) | (__| |  | | |_) | |  
+   |_|    |______/_/    \_\_____/ \___|_|  |_|  __/| |  
+                                             | |   | |  
+                                             |_|   | |_ 
+       Website: https://feascript.com/              \__|  */
+
+#blocklyDiv {
+  width: 75%; /* Adjust width to make space for the control panel */
+  height: 80vh; /* Occupy 80% of the viewport height */
+  border: 1px solid #ddd; /* Add a border around the Blockly container */
+  float: left; /* Align to the left side */
+}
+
+#controlPanelContainer {
+  width: 20%; /* Adjust the width as needed */
+  height: 80vh; /* Match the height of the Blockly container */
+  margin: 20px; /* Add some margin */
+  text-align: center; /* Ensure content aligns in the center */
+  float: right; /* Align to the right side */
+}
+
+:root {
+  --tp-base-background-color: #4d4d4d; /* Base background color: dark gray */
+  --tp-base-shadow-color: rgba(0, 0, 0, 0.2); /* Shadow color */
+  --tp-button-background-color: #d4aa00; /* Button background color: gold */
+  --tp-button-background-color-active: #e6b800; /* Button active background: slightly lighter gold */
+  --tp-button-background-color-focus: #c29500; /* Button focus background: darker gold */
+  --tp-button-background-color-hover: #ffcc00; /* Button hover background: brighter gold */
+  --tp-button-foreground-color: #ffffff; /* Button text color: white */
+  --tp-container-background-color: #333333; /* Container background: darker gray */
+  --tp-container-background-color-active: #4d4d4d; /* Active container background: matching the base */
+  --tp-container-background-color-focus: #5e5e5e; /* Focused container background: slightly lighter gray */
+  --tp-container-background-color-hover: #666666; /* Hovered container background: mid-gray */
+  --tp-container-foreground-color: #ffffff; /* Container text color: white */
+  --tp-groove-foreground-color: #d4aa00; /* Groove color: gold */
+  --tp-input-background-color: #4d4d4d; /* Input background: dark gray */
+  --tp-input-background-color-active: #333333; /* Active input background: darker gray */
+  --tp-input-background-color-focus: #5e5e5e; /* Focused input background: slightly lighter gray */
+  --tp-input-background-color-hover: #666666; /* Hovered input background: mid-gray */
+  --tp-input-foreground-color: #ffffff; /* Input text color: white */
+  --tp-label-foreground-color: #d4aa00; /* Label text color: gold */
+  --tp-monitor-background-color: #333333; /* Monitor (display box) background: darker gray */
+  --tp-monitor-foreground-color: #ffffff; /* Monitor text color: white */
+}

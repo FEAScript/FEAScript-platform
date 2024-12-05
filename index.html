@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+
+<!--   ______ ______           _____           _       _     -->
+<!--  |  ____|  ____|   /\    / ____|         (_)     | |    -->
+<!--  | |__  | |__     /  \  | (___   ___ ____ _ ____ | |_   -->
+<!--  |  __| |  __|   / /\ \  \___ \ / __|  __| |  _ \| __|  -->
+<!--  | |    | |____ / ____ \ ____) | (__| |  | | |_) | |    -->
+<!--  |_|    |______/_/    \_\_____/ \___|_|  |_|  __/| |    -->
+<!--                                            | |   | |    -->
+<!--                                            |_|   | |_   -->
+<!--       Website: https://feascript.com/             \__|  -->
+
 <html>
   <head>
     <!-- Page title -->
@@ -13,53 +24,13 @@
     <!-- Link to the CSS file -->
     <link href="https://feascript.com/FEAScript-website.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="FEAScript-platform.css" rel="stylesheet" type="text/css" />
 
     <title>Blockly File Import</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/blockly_compressed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/blocks_compressed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/msg/en.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/javascript_compressed.min.js"></script>
-    <!-- Inline styles for full-screen layout -->
-    <style>
-      #blocklyDiv {
-        width: 75%; /* Adjust width to make space for the control panel */
-        height: 80vh; /* Occupy 80% of the viewport height */
-        border: 1px solid #ddd; /* Add a border around the Blockly container */
-        float: left; /* Align to the left side */
-      }
-
-      #controlPanelContainer {
-        width: 20%; /* Adjust the width as needed */
-        height: 80vh; /* Match the height of the Blockly container */
-        margin: 20px; /* Add some margin */
-        text-align: center; /* Ensure content aligns in the center */
-        float: right; /* Align to the right side */
-      }
-
-      :root {
-        --tp-base-background-color: #4d4d4d; /* Base background color: dark gray */
-        --tp-base-shadow-color: rgba(0, 0, 0, 0.2); /* Shadow color */
-        --tp-button-background-color: #d4aa00; /* Button background color: gold */
-        --tp-button-background-color-active: #e6b800; /* Button active background: slightly lighter gold */
-        --tp-button-background-color-focus: #c29500; /* Button focus background: darker gold */
-        --tp-button-background-color-hover: #ffcc00; /* Button hover background: brighter gold */
-        --tp-button-foreground-color: #ffffff; /* Button text color: white */
-        --tp-container-background-color: #333333; /* Container background: darker gray */
-        --tp-container-background-color-active: #4d4d4d; /* Active container background: matching the base */
-        --tp-container-background-color-focus: #5e5e5e; /* Focused container background: slightly lighter gray */
-        --tp-container-background-color-hover: #666666; /* Hovered container background: mid-gray */
-        --tp-container-foreground-color: #ffffff; /* Container text color: white */
-        --tp-groove-foreground-color: #d4aa00; /* Groove color: gold */
-        --tp-input-background-color: #4d4d4d; /* Input background: dark gray */
-        --tp-input-background-color-active: #333333; /* Active input background: darker gray */
-        --tp-input-background-color-focus: #5e5e5e; /* Focused input background: slightly lighter gray */
-        --tp-input-background-color-hover: #666666; /* Hovered input background: mid-gray */
-        --tp-input-foreground-color: #ffffff; /* Input text color: white */
-        --tp-label-foreground-color: #d4aa00; /* Label text color: gold */
-        --tp-monitor-background-color: #333333; /* Monitor (display box) background: darker gray */
-        --tp-monitor-foreground-color: #ffffff; /* Monitor text color: white */
-      }
-    </style>
   </head>
 
   <script type="module">
@@ -106,10 +77,10 @@
       title: "Evaluate",
     });
 
-      // Define the "Evaluate" button's click action
-      btn_eval.on("click", () => {
-        runCode(); // Call the same runCode() function used for the Run button
-      });
+    // Define the "Evaluate" button's click action
+    btn_eval.on("click", () => {
+      runCode(); // Call the same runCode() function used for the Run button
+    });
   </script>
 
   <body>
@@ -132,7 +103,7 @@
     <div id="blocklyDiv"></div>
     <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
       <category name="File Operations">
-        <block type="file_import_block"></block>
+        <block type="mesh_file_import_block"></block>
       </category>
       <category name="Solver Configuration">
         <block type="feascript_set_solver"></block>
@@ -153,28 +124,36 @@
         <block type="lists_create_with"></block>
       </category>
     </xml>
+
+    <!-- FEAScript module -->
+    <script type="module">
+      import { FEAScriptModel } from "https://feascript.github.io/FEAScript-core/src/index.js";
+      // This will ensure that FEAScriptModel is available in the global scope and can be accessed when the generated code is executed
+      window.FEAScriptModel = FEAScriptModel;
+    </script>
+
     <script>
-      // Define the File Import Block
-      Blockly.Blocks["file_import_block"] = {
+      // Define the Mesh File Import Block
+      Blockly.Blocks["mesh_file_import_block"] = {
         init: function () {
           this.jsonInit({
-            type: "file_import_block",
-            message0: "Import file",
+            type: "mesh_file_import_block",
+            message0: "Import mesh file",
             nextStatement: null,
             previousStatement: null,
             colour: 230,
-            tooltip: "Open a file dialog to import a file",
+            tooltip: "Open a file dialog to import a mesh file",
           });
         },
       };
 
-      // Add JavaScript generator for the File Import Block
-      Blockly.JavaScript["file_import_block"] = function (block) {
+      // Add JavaScript generator for the Mesh File Import Block
+      Blockly.JavaScript["mesh_file_import_block"] = function (block) {
         const code = `
         (function() {
           const fileInput = document.createElement('input');
           fileInput.type = 'file';
-          fileInput.accept = '*/*'; // Accept all file types
+          fileInput.accept = '.msh'; // Accept only .msh files
           fileInput.onchange = (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -194,22 +173,22 @@
       };
 
       // Define the FEAScript Model Creation Block
-      Blockly.Blocks['feascript_create_model'] = {
-        init: function() {
+      Blockly.Blocks["feascript_create_model"] = {
+        init: function () {
           this.jsonInit({
-            type: 'feascript_create_model',
-            message0: 'Create new FEAScript model',
+            type: "feascript_create_model",
+            message0: "Create model",
             nextStatement: null,
             previousStatement: null,
             colour: 230,
-            tooltip: 'Creates a new FEAScript model instance'
+            tooltip: "Creates a new FEAScript model instance",
           });
-        }
+        },
       };
 
       // Add JavaScript generator for the Model Creation Block
-      Blockly.JavaScript['feascript_create_model'] = function(block) {
-        return 'const model = new FEAScriptModel();\n';
+      Blockly.JavaScript["feascript_create_model"] = function (block) {
+        return "const model = new FEAScriptModel();\n";
       };
 
       // Define custom blocks
