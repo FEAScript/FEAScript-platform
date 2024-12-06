@@ -26,11 +26,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="FEAScript-platform.css" rel="stylesheet" type="text/css" />
 
-    <title>Blockly File Import</title>
+    <!-- Import the Blockly library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/blockly_compressed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/blocks_compressed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/msg/en.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blockly/6.20210701.0/javascript_compressed.min.js"></script>
+
+    <!-- Import the Plotly.js library for plotting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+    <!-- Import the Math.js library for mathematical operations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.0/math.min.js"></script>
   </head>
 
   <script type="module">
@@ -100,24 +105,40 @@
     </ul>
 
     <div id="controlPanelContainer"></div>
-    <div id="blocklyDiv"></div>
+    
+    <div class="tab">
+      <button class="tablinks active" onclick="openTab(event, 'BlocklyTab')">Blocks</button>
+      <button class="tablinks" onclick="openTab(event, 'SolutionTab')">Solution</button>
+    </div>
+
+    <div id="BlocklyTab" class="tabcontent" style="display: block;">
+      <div id="blocklyDiv"></div>
+    </div>
+
+    <div id="SolutionTab" class="tabcontent">
+      <div id="solutionPlot" style="overflow: auto; width: 100%; height: 100%;">
+        <div id="plotlyDiv" style="width: 100%; height: 100%;"></div>
+      </div>
+    </div>
+
     <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
-      <category name="File Operations">
-        <block type="mesh_file_import_block"></block>
+      <category name="Model Operations">
+        <block type="feascript_create_model"></block>
+        <block type="feascript_solve"></block>
       </category>
       <category name="Solver Configuration">
         <block type="feascript_set_solver"></block>
       </category>
       <category name="Mesh Configuration">
+        <block type="mesh_file_import_block"></block>
         <block type="feascript_set_mesh"></block>
       </category>
       <category name="Boundary Conditions">
-        <block type="feascript_add_thermal_boundary_condition"></block>
+        <block type="feascript_add_symmetry_boundary_condition"></block>
+        <block type="feascript_add_constant_temp_boundary_condition"></block>
+        <block type="feascript_add_convection_boundary_condition"></block>
       </category>
-      <category name="Model Operations">
-        <block type="feascript_create_model"></block>
-        <block type="feascript_solve"></block>
-      </category>
+
       <category name="Basic Blocks">
         <block type="math_number"></block>
         <block type="text"></block>
@@ -127,9 +148,10 @@
 
     <!-- FEAScript module -->
     <script type="module">
-      import { FEAScriptModel } from "https://feascript.github.io/FEAScript-core/src/index.js";
-      // This will ensure that FEAScriptModel is available in the global scope and can be accessed when the generated code is executed
+      import { FEAScriptModel, plotSolution } from "https://feascript.github.io/FEAScript-core/src/index.js";
+      // This will ensure that FEAScriptModel and plotSolution are available in the global scope and can be accessed when the generated code is executed
       window.FEAScriptModel = FEAScriptModel;
+      window.plotSolution = plotSolution;
     </script>
 
     <script>
@@ -179,7 +201,6 @@
             type: "feascript_create_model",
             message0: "Create model",
             nextStatement: null,
-            previousStatement: null,
             colour: 230,
             tooltip: "Creates a new FEAScript model instance",
           });
@@ -212,7 +233,7 @@
         },
         {
           type: "feascript_set_mesh",
-          message0: "Set mesh dimension %1 order %2\n elements X %3 elements Y %4 max X %5 max Y %6",
+          message0: "Set mesh dimension %1 order %2\n elements X %3 elements Y %4 max X %5 m max Y %6 m",
           args0: [
             {
               type: "field_dropdown",
@@ -256,8 +277,8 @@
           colour: 230,
         },
         {
-          type: "feascript_add_thermal_boundary_condition",
-          message0: "Add thermal boundary condition %1 type %2 value %3",
+          type: "feascript_add_constant_temp_boundary_condition",
+          message0: "Add constant temperature boundary condition %1 temperature %2 °C",
           args0: [
             {
               type: "input_value",
@@ -265,18 +286,47 @@
               check: "String",
             },
             {
-              type: "field_dropdown",
-              name: "CONDITION_TYPE",
-              options: [
-                ["constantTemp", "constantTemp"],
-                ["symmetry", "symmetry"],
-                ["convection", "convection"],
-              ],
+              type: "input_value",
+              name: "TEMPERATURE",
+              check: "Number",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          type: "feascript_add_symmetry_boundary_condition",
+          message0: "Add symmetry boundary condition %1",
+          args0: [
+            {
+              type: "input_value",
+              name: "BOUNDARY_KEY",
+              check: "String",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          type: "feascript_add_convection_boundary_condition",
+          message0: "Add convection boundary condition %1 effective heat transfer coefficient %2 m⁻¹ external temperature %3 °C",
+          args0: [
+            {
+              type: "input_value",
+              name: "BOUNDARY_KEY",
+              check: "String",
             },
             {
               type: "input_value",
-              name: "CONDITION_VALUE",
-              check: "Array",
+              name: "CONVECTION_COEFF",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "EXTERNAL_TEMP",
+              check: "Number",
             },
           ],
           previousStatement: null,
@@ -287,7 +337,6 @@
           type: "feascript_solve",
           message0: "Solve model",
           previousStatement: null,
-          nextStatement: null,
           colour: 230,
         },
       ]);
@@ -324,25 +373,28 @@
         });\n`;
       };
 
-      Blockly.JavaScript["feascript_add_thermal_boundary_condition"] = function (block) {
-        const boundaryKey = Blockly.JavaScript.valueToCode(
-          block,
-          "BOUNDARY_KEY",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
-        const conditionType = block.getFieldValue("CONDITION_TYPE");
-        const conditionValue = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION_VALUE",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
-        return `model.addBoundaryCondition(${boundaryKey}, ["${conditionType}", ...${conditionValue}]);\n`;
+      Blockly.JavaScript["feascript_add_constant_temp_boundary_condition"] = function (block) {
+        const boundaryKey = Blockly.JavaScript.valueToCode(block, "BOUNDARY_KEY", Blockly.JavaScript.ORDER_ATOMIC);
+        const temperature = Blockly.JavaScript.valueToCode(block, "TEMPERATURE", Blockly.JavaScript.ORDER_ATOMIC);
+        return `model.addBoundaryCondition(${boundaryKey}, ["constantTemp", ${temperature}]);\n`;
+      };
+
+      Blockly.JavaScript["feascript_add_symmetry_boundary_condition"] = function (block) {
+        const boundaryKey = Blockly.JavaScript.valueToCode(block, "BOUNDARY_KEY", Blockly.JavaScript.ORDER_ATOMIC);
+        return `model.addBoundaryCondition(${boundaryKey}, ["symmetry"]);\n`;
+      };
+
+      Blockly.JavaScript["feascript_add_convection_boundary_condition"] = function (block) {
+        const boundaryKey = Blockly.JavaScript.valueToCode(block, "BOUNDARY_KEY", Blockly.JavaScript.ORDER_ATOMIC);
+        const convectionCoeff = Blockly.JavaScript.valueToCode(block, "CONVECTION_COEFF", Blockly.JavaScript.ORDER_ATOMIC);
+        const externalTemp = Blockly.JavaScript.valueToCode(block, "EXTERNAL_TEMP", Blockly.JavaScript.ORDER_ATOMIC);
+        return `model.addBoundaryCondition(${boundaryKey}, ["convection", ${convectionCoeff}, ${externalTemp}]);\n`;
       };
 
       Blockly.JavaScript["feascript_solve"] = function (block) {
         return `
       const { solutionVector, nodesCoordinates } = model.solve();
-      plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "contour", "solutionPlot");
+      plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "contour", "plotlyDiv");
     `;
       };
 
@@ -359,6 +411,26 @@
           eval(code); // Execute the generated code
         } catch (e) {
           console.error("Error running Blockly code:", e);
+        }
+      }
+
+      // Add tab switching function
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+        
+        // Resize Blockly workspace when its tab becomes visible
+        if (tabName === 'BlocklyTab') {
+          Blockly.svgResize(workspace);
         }
       }
     </script>
