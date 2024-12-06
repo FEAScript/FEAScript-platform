@@ -44,10 +44,10 @@
 }
 
 #blocklyDiv {
-  width: 100%; /* Changed from 75% */
-  height: 100%; /* Changed from 80vh */
-  border: none; /* Removed border since it's handled by tabcontent */
-  float: none; /* Removed float */
+  width: 100%;
+  height: 100%; 
+  border: none;
+  float: none;
 }
 
 #solutionPlot {
@@ -57,11 +57,11 @@
 }
 
 #controlPanelContainer {
-  width: 20%; /* Adjust the width as needed */
-  height: 80vh; /* Match the height of the Blockly container */
-  margin: 20px; /* Add some margin */
-  text-align: center; /* Ensure content aligns in the center */
-  float: right; /* Align to the right side */
+  width: 20%;
+  height: 80vh;
+  margin: 20px;
+  text-align: center;
+  float: right;
 }
 
 :root {
