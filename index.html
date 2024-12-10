@@ -55,13 +55,13 @@
     // Add an Save button to the panel
     const btn_save = f1.addButton({
       title: "Save Project",
-      disabled: true,
+      disabled: false,
     });
 
     // Add an Load button to the panel
     const btn_load = f1.addButton({
       title: "Load Project",
-      disabled: true,
+      disabled: false,
     });
 
     const f2 = pane.addFolder({
@@ -85,6 +85,43 @@
     // Define the "Evaluate" button's click action
     btn_eval.on("click", () => {
       runCode(); // Call the same runCode() function used for the Run button
+    });
+
+    // Add functionality to save Blockly workspace configuration
+    btn_save.on("click", () => {
+      const xml = Blockly.Xml.workspaceToDom(workspace);
+      const xmlText = Blockly.Xml.domToText(xml);
+      const blob = new Blob([xmlText], { type: "text/xml" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = prompt("Enter filename", "blockly_configuration.xml") || "blockly_configuration.xml";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      console.log("Project saved");
+    });
+
+    // Add functionality to load Blockly workspace configuration
+    btn_load.on("click", () => {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".xml";
+      fileInput.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const xmlText = e.target.result;
+            const xml = Blockly.Xml.textToDom(xmlText);
+            Blockly.Xml.domToWorkspace(xml, workspace);
+            console.log("Project loaded");
+          };
+          reader.readAsText(file);
+        }
+      };
+      fileInput.click();
     });
   </script>
 
