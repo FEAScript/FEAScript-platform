@@ -335,7 +335,17 @@
         },
         {
           type: "feascript_solve",
-          message0: "Solve model",
+          message0: "Solve model with %1",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "SOLVER_METHOD",
+              options: [
+                ["lusolve", "lusolve"],
+                // Add other solver methods
+              ],
+            },
+          ],
           previousStatement: null,
           colour: 230,
         },
@@ -392,10 +402,12 @@
       };
 
       Blockly.JavaScript["feascript_solve"] = function (block) {
+        const solverMethod = block.getFieldValue("SOLVER_METHOD");
         return `
-      const { solutionVector, nodesCoordinates } = model.solve();
-      plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "contour", "plotlyDiv");
-    `;
+            model.setSolverMethod("${solverMethod}");
+            const { solutionVector, nodesCoordinates } = model.solve();
+            plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "contour", "plotlyDiv");
+        `;
       };
 
       // Inject Blockly
