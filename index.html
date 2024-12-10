@@ -105,19 +105,19 @@
     </ul>
 
     <div id="controlPanelContainer"></div>
-    
+
     <div class="tab">
       <button class="tablinks active" onclick="openTab(event, 'BlocklyTab')">Blocks</button>
       <button class="tablinks" onclick="openTab(event, 'SolutionTab')">Solution</button>
     </div>
 
-    <div id="BlocklyTab" class="tabcontent" style="display: block;">
+    <div id="BlocklyTab" class="tabcontent" style="display: block">
       <div id="blocklyDiv"></div>
     </div>
 
     <div id="SolutionTab" class="tabcontent">
-      <div id="solutionPlot" style="overflow: auto; width: 100%; height: 100%;">
-        <div id="plotlyDiv" style="width: 100%; height: 100%;"></div>
+      <div id="solutionPlot" style="overflow: auto; width: 100%; height: 100%">
+        <div id="plotlyDiv" style="width: 100%; height: 100%"></div>
       </div>
     </div>
 
@@ -131,7 +131,8 @@
       </category>
       <category name="Mesh Configuration">
         <block type="mesh_file_import_block"></block>
-        <block type="feascript_set_mesh"></block>
+        <block type="feascript_set_mesh_1D"></block>
+        <block type="feascript_set_mesh_2D"></block>
       </category>
       <category name="Boundary Conditions">
         <block type="feascript_add_symmetry_boundary_condition"></block>
@@ -232,17 +233,36 @@
           colour: 230,
         },
         {
-          type: "feascript_set_mesh",
-          message0: "Set mesh dimension %1 order %2\n elements X %3 elements Y %4 max X %5 m max Y %6 m",
+          type: "feascript_set_mesh_1D",
+          message0: "Set 1D mesh order %1 elements X %2 max X %3 m",
           args0: [
             {
               type: "field_dropdown",
-              name: "DIMENSION",
+              name: "ORDER",
               options: [
-                ["2D", "2D"],
-                ["1D", "1D"],
+                ["Linear", "linear"],
+                ["Quadratic", "quadratic"],
               ],
             },
+            {
+              type: "input_value",
+              name: "NUM_ELEMENTS_X",
+              check: "Number",
+            },
+            {
+              type: "input_value",
+              name: "MAX_X",
+              check: "Number",
+            },
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 230,
+        },
+        {
+          type: "feascript_set_mesh_2D",
+          message0: "Set 2D mesh order %1 elements X %2 elements Y %3 max X %4 m max Y %5 m",
+          args0: [
             {
               type: "field_dropdown",
               name: "ORDER",
@@ -311,7 +331,8 @@
         },
         {
           type: "feascript_add_convection_boundary_condition",
-          message0: "Add convection boundary condition %1 effective heat transfer coefficient %2 m⁻¹ external temperature %3 °C",
+          message0:
+            "Add convection boundary condition %1 effective heat transfer coefficient %2 m⁻¹ external temperature %3 °C",
           args0: [
             {
               type: "input_value",
@@ -357,8 +378,24 @@
         return `model.setSolverConfig("${solverType}");\n`;
       };
 
-      Blockly.JavaScript["feascript_set_mesh"] = function (block) {
-        const dimension = block.getFieldValue("DIMENSION");
+      Blockly.JavaScript["feascript_set_mesh_1D"] = function (block) {
+        const order = block.getFieldValue("ORDER");
+        const numElementsX = Blockly.JavaScript.valueToCode(
+          block,
+          "NUM_ELEMENTS_X",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const maxX = Blockly.JavaScript.valueToCode(block, "MAX_X", Blockly.JavaScript.ORDER_ATOMIC);
+
+        return `model.setMeshConfig({
+          meshDimension: "1D",
+          elementOrder: "${order}",
+          numElementsX: ${numElementsX},
+          maxX: ${maxX}
+        });\n`;
+      };
+
+      Blockly.JavaScript["feascript_set_mesh_2D"] = function (block) {
         const order = block.getFieldValue("ORDER");
         const numElementsX = Blockly.JavaScript.valueToCode(
           block,
@@ -374,30 +411,54 @@
         const maxY = Blockly.JavaScript.valueToCode(block, "MAX_Y", Blockly.JavaScript.ORDER_ATOMIC);
 
         return `model.setMeshConfig({
-        meshDimension: "${dimension}",
-        elementOrder: "${order}",
-        numElementsX: ${numElementsX},
-        numElementsY: ${numElementsY},
-        maxX: ${maxX},
-        maxY: ${maxY}
+          meshDimension: "2D",
+          elementOrder: "${order}",
+          numElementsX: ${numElementsX},
+          numElementsY: ${numElementsY},
+          maxX: ${maxX},
+          maxY: ${maxY}
         });\n`;
       };
 
       Blockly.JavaScript["feascript_add_constant_temp_boundary_condition"] = function (block) {
-        const boundaryKey = Blockly.JavaScript.valueToCode(block, "BOUNDARY_KEY", Blockly.JavaScript.ORDER_ATOMIC);
-        const temperature = Blockly.JavaScript.valueToCode(block, "TEMPERATURE", Blockly.JavaScript.ORDER_ATOMIC);
+        const boundaryKey = Blockly.JavaScript.valueToCode(
+          block,
+          "BOUNDARY_KEY",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const temperature = Blockly.JavaScript.valueToCode(
+          block,
+          "TEMPERATURE",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
         return `model.addBoundaryCondition(${boundaryKey}, ["constantTemp", ${temperature}]);\n`;
       };
 
       Blockly.JavaScript["feascript_add_symmetry_boundary_condition"] = function (block) {
-        const boundaryKey = Blockly.JavaScript.valueToCode(block, "BOUNDARY_KEY", Blockly.JavaScript.ORDER_ATOMIC);
+        const boundaryKey = Blockly.JavaScript.valueToCode(
+          block,
+          "BOUNDARY_KEY",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
         return `model.addBoundaryCondition(${boundaryKey}, ["symmetry"]);\n`;
       };
 
       Blockly.JavaScript["feascript_add_convection_boundary_condition"] = function (block) {
-        const boundaryKey = Blockly.JavaScript.valueToCode(block, "BOUNDARY_KEY", Blockly.JavaScript.ORDER_ATOMIC);
-        const convectionCoeff = Blockly.JavaScript.valueToCode(block, "CONVECTION_COEFF", Blockly.JavaScript.ORDER_ATOMIC);
-        const externalTemp = Blockly.JavaScript.valueToCode(block, "EXTERNAL_TEMP", Blockly.JavaScript.ORDER_ATOMIC);
+        const boundaryKey = Blockly.JavaScript.valueToCode(
+          block,
+          "BOUNDARY_KEY",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const convectionCoeff = Blockly.JavaScript.valueToCode(
+          block,
+          "CONVECTION_COEFF",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        const externalTemp = Blockly.JavaScript.valueToCode(
+          block,
+          "EXTERNAL_TEMP",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
         return `model.addBoundaryCondition(${boundaryKey}, ["convection", ${convectionCoeff}, ${externalTemp}]);\n`;
       };
 
@@ -439,9 +500,9 @@
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
-        
+
         // Resize Blockly workspace when its tab becomes visible
-        if (tabName === 'BlocklyTab') {
+        if (tabName === "BlocklyTab") {
           Blockly.svgResize(workspace);
         }
       }
