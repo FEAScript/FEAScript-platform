@@ -253,7 +253,9 @@
 
       // Add JavaScript generator for the Model Creation Block
       Blockly.JavaScript["feascript_create_model"] = function (block) {
-        return `const model = new FEAScriptModel();`;
+        return `
+        const model = new FEAScriptModel();
+        `;
       };
 
       // Define custom blocks
@@ -430,7 +432,9 @@
       // Add JavaScript generators for custom blocks
       Blockly.JavaScript["feascript_set_solver"] = function (block) {
         const solverType = block.getFieldValue("SOLVER_TYPE");
-        return ` model.setSolverConfig("${solverType}");\n`;
+        return `
+        model.setSolverConfig("${solverType}");
+        `;
       };
 
       Blockly.JavaScript["feascript_set_mesh_1D"] = function (block) {
@@ -442,12 +446,14 @@
         );
         const maxX = Blockly.JavaScript.valueToCode(block, "MAX_X", Blockly.JavaScript.ORDER_ATOMIC);
 
-        return ` model.setMeshConfig({
-  meshDimension: "1D",
-  elementOrder: "${order}",
-  numElementsX: ${numElementsX},
-  maxX: ${maxX} 
- });\n`;
+        return `
+        model.setMeshConfig({
+        meshDimension: "1D",
+        elementOrder: "${order}",
+        numElementsX: ${numElementsX},
+        maxX: ${maxX} 
+        });
+        `;
       };
 
       Blockly.JavaScript["feascript_set_mesh_2D"] = function (block) {
@@ -465,14 +471,16 @@
         const maxX = Blockly.JavaScript.valueToCode(block, "MAX_X", Blockly.JavaScript.ORDER_ATOMIC);
         const maxY = Blockly.JavaScript.valueToCode(block, "MAX_Y", Blockly.JavaScript.ORDER_ATOMIC);
 
-        return ` model.setMeshConfig({
-  meshDimension: "2D",
-  elementOrder: "${order}",
-  numElementsX: ${numElementsX},
-  numElementsY: ${numElementsY},
-  maxX: ${maxX},
-  maxY: ${maxY}
- });\n`;
+        return `
+        model.setMeshConfig({
+        meshDimension: "2D",
+        elementOrder: "${order}",
+        numElementsX: ${numElementsX},
+        numElementsY: ${numElementsY},
+        maxX: ${maxX},
+        maxY: ${maxY}
+        });
+        `;
       };
 
       Blockly.JavaScript["feascript_add_constant_temp_boundary_condition"] = function (block) {
@@ -486,7 +494,9 @@
           "TEMPERATURE",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        return ` model.addBoundaryCondition(${boundaryKey}, ["constantTemp", ${temperature}]);\n`;
+        return `
+        model.addBoundaryCondition(${boundaryKey}, ["constantTemp", ${temperature}]);
+        `;
       };
 
       Blockly.JavaScript["feascript_add_symmetry_boundary_condition"] = function (block) {
@@ -495,7 +505,9 @@
           "BOUNDARY_KEY",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        return ` model.addBoundaryCondition(${boundaryKey}, ["symmetry"]);\n`;
+        return `
+        model.addBoundaryCondition(${boundaryKey}, ["symmetry"]);
+        `;
       };
 
       Blockly.JavaScript["feascript_add_convection_boundary_condition"] = function (block) {
@@ -514,22 +526,24 @@
           "EXTERNAL_TEMP",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        return ` model.addBoundaryCondition(${boundaryKey}, ["convection", ${convectionCoeff}, ${externalTemp}]);\n`;
+        return `
+        model.addBoundaryCondition(${boundaryKey}, ["convection", ${convectionCoeff}, ${externalTemp}]);
+        `;
       };
 
       Blockly.JavaScript["feascript_solve"] = function (block) {
         const solverMethod = block.getFieldValue("SOLVER_METHOD");
         return `
- model.setSolverMethod("${solverMethod}");
- const { solutionVector, nodesCoordinates } = model.solve();
-  `;
+        model.setSolverMethod("${solverMethod}");
+        const { solutionVector, nodesCoordinates } = model.solve();
+        `;
       };
 
       Blockly.JavaScript["feascript_plot_results"] = function (block) {
         const plotType = block.getFieldValue("PLOT_TYPE");
         return `
- plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "${plotType}", "plotlyDiv");
-  `;
+        plotSolution(solutionVector, nodesCoordinates, model.solverConfig, model.meshConfig.meshDimension, "${plotType}", "plotlyDiv");
+        `;
       };
 
       // Inject Blockly
@@ -540,7 +554,7 @@
       // Run Code from Workspace
       function runCode() {
         const code = Blockly.JavaScript.workspaceToCode(workspace);
-        console.log("Generated code:\n", code); // Debugging step
+        console.log("Generated code:\n",code); // Debugging step
         try {
           eval(code); // Execute the generated code
         } catch (e) {
