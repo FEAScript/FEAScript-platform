@@ -21,7 +21,7 @@
       content="finite elements, fem, galerkin, cfd, computational mechanics, javascript"
     />
     <meta name="viewport" content="width=device-width" />
-    
+
     <!-- Link to the CSS files -->
     <link href="https://feascript.com/FEAScript-website.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
@@ -88,20 +88,24 @@
       runCode(); // Call the same runCode() function used for the Run button
     });
 
-    // Add functionality to save Blockly workspace configuration
     btn_save.on("click", () => {
       const xml = Blockly.Xml.workspaceToDom(workspace);
       const xmlText = Blockly.Xml.domToText(xml);
       const blob = new Blob([xmlText], { type: "text/xml" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = prompt("Enter filename", "blockly_configuration.xml") || "blockly_configuration.xml";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      console.log("Project saved");
+
+      const filename = prompt("Enter filename", "blockly_configuration.xml");
+      if (filename) {
+        // Only proceed if the user entered a filename
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log("Project saved");
+      }
     });
 
     // Add functionality to load Blockly workspace configuration
@@ -221,7 +225,7 @@
               const reader = new FileReader();
               reader.onload = (e) => {
                 const fileContent = e.target.result;
-                console.log("File content loaded:", fileContent);
+                console.log("Mesh file loaded:", fileContent);
                 // Process fileContent here
               };
               reader.readAsText(file);
@@ -517,7 +521,7 @@
       // Run Code from Workspace
       function runCode() {
         const code = Blockly.JavaScript.workspaceToCode(workspace);
-        console.log("Generated code:", code); // Debugging step
+          console.log("Generated code:", code); // Debugging step
         try {
           eval(code); // Execute the generated code
         } catch (e) {
