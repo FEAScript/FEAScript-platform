@@ -406,7 +406,10 @@
             {
               type: "field_dropdown",
               name: "SOLVER_METHOD",
-              options: [["lusolve", "lusolve"]],
+              options: [
+                ["lusolve", "lusolve"],
+                ["jacobi", "jacobi"],
+              ],
             },
           ],
           previousStatement: null,
@@ -554,7 +557,7 @@
       // Run Code from Workspace
       function runCode() {
         const code = Blockly.JavaScript.workspaceToCode(workspace);
-        console.log("Generated code:\n",code); // Debugging step
+        console.log("Generated code:\n", code); // Debugging step
         try {
           eval(code); // Execute the generated code
         } catch (e) {
