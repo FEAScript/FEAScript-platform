@@ -4,7 +4,6 @@
 
 FEAScript-platform is a web-based interface for the FEAScript library, enabling users to create and run finite element simulations directly in their browser.
 
-### Developer Notes
+## License
 
-- `core.fileMode` is set to `false` to ignore file permission changes.  
-  Run this if needed: `git config core.fileMode false`
+FEAScript-platform is released under the [MIT license](https://github.com/FEAScript/FEAScript-platform/blob/main/LICENSE). &copy; 2025 FEAScript.
