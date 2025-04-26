@@ -2,7 +2,7 @@
 
 # FEAScript-platform
 
-FEAScript-platform is a web-based interface for the FEAScript library, enabling users to create and run finite element simulations directly in their browser.
+FEAScript-platform is browser-based visual editor designed for the FEAScript finite element simulation library. It empowers users to create and run finite element simulations directly in their browser.
 
 ## License
 
