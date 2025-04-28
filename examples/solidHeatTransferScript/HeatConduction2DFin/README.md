@@ -10,4 +10,4 @@ This example demonstrates solving a steady-state heat transfer problem in a 2D r
 
 ### Instructions
 
-The provided XML file can be directly loaded into the [FEAScript-platform](https://platform.feascript.com) visual editor. The mesh configuration and boundary conditions are defined as visual blocks. For a step-by-step guide, refer to the corresponding [tutorial](https://feascript.com/tutorials/HeatConduction2DFinPlatform.html). For additional details about the mathematical formulation, refer also to the [JavaScript API tutorial](https://feascript.com/tutorials/HeatConduction2DFin.html)
+The provided XML file can be directly loaded into the [FEAScript-platform](https://platform.feascript.com) visual editor. The mesh configuration and boundary conditions are defined as visual blocks. For a step-by-step guide, refer to the corresponding [tutorial](https://feascript.com/tutorials/HeatConduction2DFinPlatform.html). For additional details about the mathematical formulation, refer also to the [JavaScript API tutorial](https://feascript.com/tutorials/HeatConduction2DFin.html).

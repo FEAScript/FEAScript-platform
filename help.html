@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<!--   ______ ______           _____           _       _     -->
+<!--  |  ____|  ____|   /\    / ____|         (_)     | |    -->
+<!--  | |__  | |__     /  \  | (___   ___ ____ _ ____ | |_   -->
+<!--  |  __| |  __|   / /\ \  \___ \ / __|  __| |  _ \| __|  -->
+<!--  | |    | |____ / ____ \ ____) | (__| |  | | |_) | |    -->
+<!--  |_|    |______/_/    \_\_____/ \___|_|  |_|  __/| |    -->
+<!--                                            | |   | |    -->
+<!--                                            |_|   | |_   -->
+<!--       Website: https://feascript.com/             \__|  -->
+
+<html>
+  <head>
+    <title>FEAScript-platform: Help</title>
+    <link rel="icon" type="image/x-icon" href="https://feascript.com/assets/favicon.ico" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="Help page for the FEAScript-platform, a browser-based visual editor designed for the FEAScript finite element simulation library."
+    />
+    <meta
+      name="keywords"
+      content="finite elements, fem, galerkin, cfd, computational mechanics, javascript, blocks, visual programming"
+    />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- Link to the CSS files -->
+    <link href="https://feascript.com/FEAScript-website.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="FEAScript-platform.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1JPK0KLEC9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-1JPK0KLEC9");
+  </script>
+
+  <body>
+    <h1 class="top">
+      <a href="index.html">
+        <img
+          src="./assets/FEAScriptPlatformLogo.png"
+          alt="FEAScript Platform Logo"
+          id="responsive-logo"
+          style="vertical-align: middle"
+        />
+      </a>
+    </h1>
+    <h1>FEAScript-platform Help</h1>
+
+    <ul id="menu">
+      <li><a href="#gettingstarted">Getting Started</a></li>
+      <li><a href="#blockcategories">Block Categories</a></li>
+      <li><a href="#tutorials">Tutorials</a></li>
+    </ul>
+
+    <div class="highlight-container">
+      <p>
+        The FEAScript-platform provides a visual, block-based interface for creating finite element
+        simulations. Think of it like
+        <a href="https://scratch.mit.edu/"
+          >Scratch
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg"
+            alt="External Link Icon"
+            style="
+              width: 16px;
+              height: 16px;
+              vertical-align: middle;
+              margin-left: 2px;
+              margin-bottom: 4px;
+            " /></a
+        >, but for finite elements! This help page explains how to use the different blocks and components
+        available in the platform.
+      </p>
+    </div>
+
+    <h2 id="gettingstarted"><a name="Getting Started"></a>Getting Started</h2>
+    <p>
+      FEAScript-platform is a browser-based visual editor that allows you to create simulations by connecting
+      blocks together. These blocks represent different operations and configurations needed for finite
+      element simulations.
+    </p>
+
+    <p>To create a simulation:</p>
+    <ol>
+      <li>Drag blocks from the toolbox (left panel) into the workspace</li>
+      <li>Connect the blocks in a logical sequence</li>
+      <li>Configure block parameters as needed</li>
+      <li>Click the "Evaluate" button in the Control Panel to run your simulation</li>
+      <li>View the results in the "Solution" tab</li>
+    </ol>
+
+    <p>
+      You can save your work by clicking "Save Project" in the Control Panel, which will download an XML file.
+      To load a previously saved project, click "Load Project" and select the XML file.
+    </p>
+
+    <h2 id="blockcategories"><a name="Block Categories"></a>Block Categories</h2>
+    <p>The following block categories are available in the FEAScript-platform:</p>
+
+    <h3>Model Operations</h3>
+    <p>Blocks for creating and solving FEAScript models:</p>
+    <ul>
+      <li>
+        <strong>Create model</strong> - Creates a new FEAScript model instance. This should be the first block
+        in your workflow.
+      </li>
+      <li>
+        <strong>Solve model</strong> - Solves the configured model using the selected solver method. Options
+        include:
+        <ul>
+          <li>
+            <strong>lusolve</strong> - Uses LU decomposition for direct solving (faster but requires more
+            memory)
+          </li>
+          <li>
+            <strong>jacobi</strong> - Uses the iterative Jacobi method (slower but requires less memory)
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Solver Configuration</h3>
+    <p>Blocks for configuring the type of physics to be solved:</p>
+    <ul>
+      <li>
+        <strong>Set solver</strong> - Sets the solver type to use. Currently available:
+        <ul>
+          <li><strong>Solid Heat Transfer</strong> - For heat conduction problems</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Mesh Configuration</h3>
+    <p>Blocks for defining the computational mesh:</p>
+    <ul>
+      <li><strong>Import mesh file</strong> - Opens a file dialog to import a mesh file (experimental)</li>
+      <li>
+        <strong>Set 1D mesh</strong> - Configures a one-dimensional mesh with options for:
+        <ul>
+          <li>Element order (linear or quadratic)</li>
+          <li>Number of elements in X direction</li>
+          <li>Maximum X dimension</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Set 2D mesh</strong> - Configures a two-dimensional mesh with options for:
+        <ul>
+          <li>Element order (linear or quadratic)</li>
+          <li>Number of elements in X and Y directions</li>
+          <li>Maximum X and Y dimensions</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Boundary Conditions</h3>
+    <p>Blocks for defining boundary conditions for the simulation:</p>
+    <ul>
+      <li>
+        <strong>Add constant temperature boundary condition</strong> - Applies a fixed temperature to a
+        boundary
+        <ul>
+          <li>
+            Requires boundary key (a string identifying the boundary, e.g., "0", "1", "left", "right", etc.) and temperature
+            value
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Add symmetry boundary condition</strong> - Applies a zero-flux (symmetry) condition
+        <ul>
+          <li>Requires boundary key</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Add convection boundary condition</strong> - Applies a convective heat transfer condition
+        <ul>
+          <li>Requires boundary key, effective heat transfer coefficient, and external temperature</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Postprocessing</h3>
+    <p>Blocks for visualizing and analyzing results:</p>
+    <ul>
+      <li>
+        <strong>Plot results</strong> - Visualizes the solution using the specified plot type
+        <ul>
+          <li>Currently supports "contour" plot type for 2D results and "line" plot type for 1D results</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Basic Blocks</h3>
+    <p>Utility blocks for providing input values:</p>
+    <ul>
+      <li><strong>Number</strong> - Provides a numerical value</li>
+      <li><strong>Text</strong> - Provides a text string value</li>
+    </ul>
+
+    <h2 id="tutorials"><a name="Tutorials"></a>Tutorials</h2>
+    <p>For step-by-step examples of using the FEAScript-platform, check out the tutorials:</p>
+    <ul>
+      <li>
+        <a href="https://feascript.com/tutorials/HeatConduction2DFinPlatform.html" target="_blank">
+          Heat conduction in a two-dimensional fin (Platform)
+        </a>
+      </li>
+    </ul>
+
+    <ul id="menu">
+      <li>
+        <a href="index.html">Return to FEAScript-platform</a>
+      </li>
+      <li>
+        <a href="https://feascript.com/" target="_blank">Return to FEAScript Website</a>
+      </li>
+    </ul>
+
+    <p>&#169; 2023-<span id="currentYear"></span> FEAScript</p>
+    <script>
+      document.getElementById("currentYear").innerHTML = new Date().getFullYear();
+    </script>
+  </body>
+</html>
