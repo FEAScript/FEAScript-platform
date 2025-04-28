@@ -4,4 +4,8 @@
     <loc>https://platform.feascript.com/</loc>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://platform.feascript.com/help.html</loc>
+    <priority>0.8</priority>
+  </url>
 </urlset>
