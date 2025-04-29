@@ -2,7 +2,7 @@
 
 ## Heat Conduction in a Two-Dimensional Fin (Visual Editor)
 
-This example demonstrates solving a steady-state heat transfer problem in a 2D rectangular domain using the FEAScript-platform visual editor. The problem represents a typical cooling fin scenario, where heat conduction is modeled to understand temperature distribution under specific boundary conditions.
+This example demonstrates solving a steady-state heat transfer problem in a 2D rectangular domain using the FEAScript-platform visual editor. The problem represents a typical cooling fin scenario, where heat conduction is modeled to determine temperature profiles under specific boundary conditions.
 
 ### Available Versions
 
