@@ -8,4 +8,4 @@
 
 ## License
 
-FEAScript-platform is released under the [MIT license](https://github.com/FEAScript/FEAScript-platform/blob/main/LICENSE). &copy; 2025 FEAScript.
+FEAScript-platform is released under the [MIT license](https://github.com/FEAScript/FEAScript-platform/blob/main/LICENSE). &copy; 2023-2025 FEAScript.
