@@ -1,4 +1,4 @@
-<img src="./assets/FEAScriptPlatformLogo.png" width="80">
+<img src="./assets/FEAScriptPlatformLogo.png" height="80">
 
 # FEAScript-platform
 
