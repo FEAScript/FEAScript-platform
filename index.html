@@ -220,9 +220,13 @@
 
     <!-- FEAScript module -->
     <script type="module">
-      import { FEAScriptModel, plotSolution } from "https://core.feascript.com/src/index.js";
-      // This will ensure that FEAScriptModel and plotSolution are available in the global scope and can be accessed when the generated code is executed
+      import {
+        FEAScriptModel,
+        importGmshQuadTri,
+        plotSolution,
+      } from "https://core.feascript.com/src/index.js";
       window.FEAScriptModel = FEAScriptModel;
+      window.importGmshQuadTri = importGmshQuadTri;
       window.plotSolution = plotSolution;
     </script>
 
@@ -242,27 +246,41 @@
       };
 
       // Add JavaScript generator for the Mesh File Import Block
+      Blockly.Blocks["mesh_file_import_block"] = {
+        init: function () {
+          this.appendDummyInput().appendField("Import mesh file");
+          this.appendStatementInput("DO_AFTER_IMPORT").setCheck(null).appendField("Do after import");
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+          this.setColour(230);
+          this.setTooltip("Open a file dialog to import a mesh file and then run the following blocks");
+        },
+      };
+
       Blockly.JavaScript["mesh_file_import_block"] = function (block) {
+        const doAfterImport = Blockly.JavaScript.statementToCode(block, "DO_AFTER_IMPORT");
         const code = `
-        (function() {
-          const fileInput = document.createElement('input');
-          fileInput.type = 'file';
-          fileInput.accept = '.msh'; // Accept only .msh files
-          fileInput.onchange = (event) => {
-            const file = event.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                const fileContent = e.target.result;
-                console.log("Mesh file loaded:", fileContent);
-                // Process fileContent here
-              };
-              reader.readAsText(file);
-            }
+    (async function() {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.msh'; // Accept only .msh files
+      fileInput.onchange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const fileContent = e.target.result;
+            const meshFile = new File([fileContent], file.name);
+            const result = await importGmshQuadTri(meshFile);
+            console.log("Mesh import result:", result);
+            ${doAfterImport}
           };
-          fileInput.click();
-        })();
-      `;
+          reader.readAsText(file);
+        }
+      };
+      fileInput.click();
+    })();
+  `;
         return code;
       };
 
@@ -295,10 +313,7 @@
             {
               type: "field_dropdown",
               name: "SOLVER_TYPE",
-              options: [
-                ["Solid Heat Transfer", "solidHeatTransferScript"],
-                // Add other solver types
-              ],
+              options: [["Solid Heat Transfer", "solidHeatTransferScript"]],
             },
           ],
           previousStatement: null,
@@ -623,7 +638,9 @@
       </li>
     </ul>
 
-    <p>&#169; 2023-<span id="currentYear"></span> FEAScript</p>
+    <footer>
+      <p>&#169; 2023-<span id="currentYear"></span> FEAScript</p>
+    </footer>
     <script>
       document.getElementById("currentYear").innerHTML = new Date().getFullYear();
     </script>
